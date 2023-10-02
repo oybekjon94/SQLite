@@ -67,20 +67,43 @@ class MyDbHelper(context: Context):SQLiteOpenHelper(
     }
 
     override fun editStudent(student: Student) {
-
+        val database = this.writableDatabase
+        val contentValues = ContentValues()
+        contentValues.put(STUDENT_NAME,student.name)
+        contentValues.put(STUDENT_AGE,student.age)
+        contentValues.put(PHONE_NUMBER,student.phoneNumber)
+        database.update(
+            TABLE_NAME,
+            contentValues,
+            "$STUDENT_ID = ?",
+            arrayOf(student.id.toString())
+        )
 
     }
 
     override fun deleteStudent(student: Student) {
+       val database = this.writableDatabase
+       database.delete(TABLE_NAME,"$STUDENT_NAME = ?", arrayOf(student.id.toString()))
 
 
     }
 
     override fun getStudentsCount(): Int {
-       return 0
+        val database = this.readableDatabase
+        val query = "select * from $TABLE_NAME"
+        val cursor = database.rawQuery(query,null)
+       return cursor.count
     }
 
-//    override fun getStudentById(id: Int): Student {
-//   return 0
-//    }
+    override fun getStudentById(id: Int): Student {
+        val database = this.readableDatabase
+        val cursor = database.query(TABLE_NAME, arrayOf(STUDENT_ID, STUDENT_NAME, STUDENT_AGE, PHONE_NUMBER),"$STUDENT_ID = ?",
+            arrayOf(id.toString()),
+            null,
+            null,
+            null
+        )
+        cursor?.moveToFirst()
+   return Student(cursor.getInt(0),cursor.getString(1),cursor.getInt(2),cursor.getString(3))
+    }
 }

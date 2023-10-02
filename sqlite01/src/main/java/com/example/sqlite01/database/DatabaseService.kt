@@ -17,5 +17,5 @@ interface DatabaseService {
     fun getStudentsCount():Int
 
     //id aloqador studentni qaytarib bersin
-    //fun getStudentById(id:Int):Student
+    fun getStudentById(id:Int):Student
 }
